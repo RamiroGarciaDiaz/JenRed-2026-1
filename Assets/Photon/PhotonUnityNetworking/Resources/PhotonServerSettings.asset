@@ -40,6 +40,14 @@ MonoBehaviour:
   - Fire
   - RespawnSpaceship
   - ChangeColor
+  - DefineSpawnPoint
+  - EnableMovement
+  - OnDamage
+  - OnHeal
+  - OnShieldGained
+  - RPC_AnnounceEvent
+  - RPC_ForceDisconnect
+  - RPC_SyncChampion
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
