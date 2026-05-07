@@ -40,6 +40,10 @@ MonoBehaviour:
   - Fire
   - RespawnSpaceship
   - ChangeColor
+  - RPC_BroadcastVote
+  - RPC_EndVote
+  - RPC_ReceiveVote
+  - RPC_StartVote
   - DefineSpawnPoint
   - EnableMovement
   - OnDamage

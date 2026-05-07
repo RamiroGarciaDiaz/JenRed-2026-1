@@ -1,7 +1,7 @@
 using Photon.Pun;
 using UnityEngine;
 
-public class CrateModel : MonoBehaviourPun, IDamage
+public class CrateModel : MonoBehaviourPun
 {
     private float maxHealth = 60f;
     [SerializeField] float currentHealth;
