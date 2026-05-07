@@ -40,6 +40,10 @@ MonoBehaviour:
   - Fire
   - RespawnSpaceship
   - ChangeColor
+  - RPC_BroadcastVote
+  - RPC_EndVote
+  - RPC_ReceiveVote
+  - RPC_StartVote
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
