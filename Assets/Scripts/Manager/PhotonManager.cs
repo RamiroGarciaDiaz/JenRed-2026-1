@@ -15,36 +15,27 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     [SerializeField] private float outcomeLag;
     [SerializeField] private float incomeJitter;
     [SerializeField] private float outcomeJitter;
-    
     [Header("Scenes")]
     [SerializeField] private string menuLevel = "StartingScene";
     [SerializeField] private string gameLevel = "GameScene";
-    
-    
     public static PhotonManager Instance;
     public static string LastDisconnectErrorMessage = "";
-    
     public Action OnRoom;
     public Action OnConnectedToMasterEvent;
     public Action<short, string> OnJoinRoomFailedEvent;
-    
     private Coroutine _disconnectTracker;
-    
     private bool _initialSetupDone = false;
     public Action<DisconnectCause> OnDisconnectedEvent;
 
-    public static bool ShowDisconnectErrorOnLoad = false; 
-    
+    public static bool ShowDisconnectErrorOnLoad = false;
     void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
-        
             Application.runInBackground = true;
             PhotonNetwork.KeepAliveInBackground = 15000;
-            
             PhotonNetwork.LogLevel = PunLogLevel.ErrorsOnly;
             PhotonNetwork.NetworkingClient.LoadBalancingPeer.DebugOut = DebugLevel.ERROR;
         }
@@ -52,13 +43,13 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         {
             Destroy(gameObject);
         }
-        QualitySettings.vSyncCount = 0; 
+        QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = 60;
     }
 
     private void LatencyDebugging()
     {
-    #if UNITY_EDITOR
+#if UNITY_EDITOR
         if (debuggingLatency)
         {
             PhotonNetwork.NetworkingClient.LoadBalancingPeer.IsSimulationEnabled = true;
@@ -70,7 +61,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
             settings.IncomingLossPercentage = 0;
             settings.OutgoingLossPercentage = 0;
         }
-    #endif
+#endif
     }
 
     void Start()
@@ -102,7 +93,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         {
             Log.Info("Rejoined Lobby");
         }
-        OnConnectedToMasterEvent?.Invoke(); 
+        OnConnectedToMasterEvent?.Invoke();
     }
     public override void OnDisconnected(DisconnectCause cause)
     {
@@ -110,19 +101,18 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         {
             Log.Info("Disconnected: Player left voluntarily");
         }
-        else 
+        else
         {
             ShowDisconnectErrorOnLoad = true;
-            LastDisconnectErrorMessage = $"Network Error: {cause}"; 
+            LastDisconnectErrorMessage = $"Network Error: {cause}";
 
-            if (SceneManager.GetActiveScene().name != menuLevel) 
+            if (SceneManager.GetActiveScene().name != menuLevel)
             {
                 SceneManager.LoadScene(menuLevel);
             }
             CheckDisconnectionError(cause);
         }
     }
-    
     #endregion
 
     #region RoomLogic
@@ -147,7 +137,6 @@ public class PhotonManager : MonoBehaviourPunCallbacks
             OnRoom?.Invoke();
         }
     }
-   
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
         Log.Info($"Player {newPlayer.NickName} has joined the room");
@@ -166,18 +155,16 @@ public class PhotonManager : MonoBehaviourPunCallbacks
             PhotonNetwork.CreateRoom(roomName, roomOptions);
         }
     }
-    
     public override void OnLeftRoom() //Local, only client
     {
         Log.Info("Left room");
     }
 
-    
+
     public override void OnPlayerLeftRoom(Player otherPlayer) //All Players
     {
         Log.Info("Player " + otherPlayer.NickName + "left the Room");
     }
-    
     public override void OnJoinRoomFailed(short returnCode, string message)
     {
         CheckRoomFailedError(returnCode, message);
@@ -194,10 +181,9 @@ public class PhotonManager : MonoBehaviourPunCallbacks
 
     public void RoomSearchRefresh()
     {
-        RoomOptions roomOptions = new RoomOptions { IsVisible = false, EmptyRoomTtl = 10000, CleanupCacheOnLeave = true};
-        PhotonNetwork.CreateRoom(UnityEngine.Random.Range(0f,1000f).ToString(), roomOptions);
+        RoomOptions roomOptions = new RoomOptions { IsVisible = false, EmptyRoomTtl = 10000, CleanupCacheOnLeave = true };
+        PhotonNetwork.CreateRoom(UnityEngine.Random.Range(0f, 1000f).ToString(), roomOptions);
     }
-    
     #endregion
 
     #region CleanUp Logic
@@ -208,7 +194,6 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     }
 
     #endregion
-    
     #region JoinBy
 
     public void JoinByNameRoom(string roomName)
@@ -230,7 +215,6 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     #endregion
 
     #region FailChecks
-    
     private void CheckDisconnectionError(DisconnectCause cause)
     {
         OnDisconnectedEvent?.Invoke(cause);
@@ -241,16 +225,14 @@ public class PhotonManager : MonoBehaviourPunCallbacks
             case DisconnectCause.ServerTimeout:
             case DisconnectCause.ClientTimeout:
                 if (_disconnectTracker != null) StopCoroutine(_disconnectTracker);
-                _disconnectTracker = StartCoroutine(TrackDisconnectTime(cause)); 
+                _disconnectTracker = StartCoroutine(TrackDisconnectTime(cause));
                 break;
-        
             case DisconnectCause.InvalidAuthentication:
             case DisconnectCause.MaxCcuReached:
             case DisconnectCause.DisconnectByServerLogic:
             case DisconnectCause.DisconnectByServerReasonUnknown:
                 Log.Error($"Disconnected: Server error ({cause})");
                 break;
-        
             default:
                 Log.Warning($"Disconnected: Unknown cause ({cause})");
                 break;
@@ -309,13 +291,11 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         while (!PhotonNetwork.IsConnected)
         {
             elapsed += Time.deltaTime;
-           
             if (elapsed >= nextLogTime)
             {
                 Log.Warning($"Still disconnected... {Mathf.RoundToInt(elapsed)}s elapsed");
                 nextLogTime += 5f;
             }
-           
             if (elapsed >= 30f)
             {
                 Log.Error($"Disconnect timeout reached after 30s. Cause: {cause}");
@@ -326,26 +306,24 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         Log.Info($"Reconnected after {elapsed:F1}s");
     }
     public void ManualReconnect()
-   {
-       if (PhotonNetwork.IsConnected) return;
+    {
+        if (PhotonNetwork.IsConnected) return;
 
-       Log.Info("Initializing Manual Rejoin");
-       
-       if (PhotonNetwork.ReconnectAndRejoin())
-       {
-           Log.Info("Reconnecting and Returning to Menu");
-       }
-       else if (PhotonNetwork.Reconnect())
-       {
-           Log.Info("Reconnecting to Services");
-       }
-       else
-       {
-           Log.Info("Initializing Clear Connection.");
-           PhotonNetwork.ConnectUsingSettings();
-       }
-   }
-    
+        Log.Info("Initializing Manual Rejoin");
+        if (PhotonNetwork.ReconnectAndRejoin())
+        {
+            Log.Info("Reconnecting and Returning to Menu");
+        }
+        else if (PhotonNetwork.Reconnect())
+        {
+            Log.Info("Reconnecting to Services");
+        }
+        else
+        {
+            Log.Info("Initializing Clear Connection.");
+            PhotonNetwork.ConnectUsingSettings();
+        }
+    }
     #endregion
 
     #region ErrorLogging for UI
@@ -353,16 +331,15 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     private string GetFriendlyJoinError(short returnCode, string message) => returnCode switch
     {
         ErrorCode.GameDoesNotExist => "Room Not Found.",
-        ErrorCode.GameFull         => "Room is Full.",
-        ErrorCode.GameClosed       => "Room is Closed.",
-        _                          => $"Error ({returnCode}): {message}"
+        ErrorCode.GameFull => "Room is Full.",
+        ErrorCode.GameClosed => "Room is Closed.",
+        _ => $"Error ({returnCode}): {message}"
     };
-    
     private string GetFriendlyCreateError(short returnCode, string message) => returnCode switch
     {
         ErrorCode.GameIdAlreadyExists => "Room Name Already Exists.",
         ErrorCode.InvalidAuthentication => "Authentication Error.",
-        _                               => $"Error ({returnCode}): {message}"
+        _ => $"Error ({returnCode}): {message}"
     };
 
     #endregion
