@@ -17,8 +17,8 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     [SerializeField] private float outcomeJitter;
     
     [Header("Scenes")]
-    [SerializeField] private string menuLevel = "Starting Scene";
-    [SerializeField] private string gameLevel = "Game Scene";
+    [SerializeField] private string menuLevel = "StartingScene";
+    [SerializeField] private string gameLevel = "GameScene";
     
     
     public static PhotonManager Instance;
