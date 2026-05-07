@@ -17,7 +17,7 @@ public class RematchManager : MonoBehaviourPunCallbacks
 
     [SerializeField] private float timeoutSeconds = 30f;
     [SerializeField] private string gameSceneName  = "GameScene";
-    [SerializeField] private string mainMenuSceneName = "StartScene";
+    [SerializeField] private string mainMenuSceneName = "StartingScene";
 
     private PhotonView pv;
     private Dictionary<int, bool> votes = new Dictionary<int, bool>();

@@ -44,6 +44,14 @@ MonoBehaviour:
   - RPC_EndVote
   - RPC_ReceiveVote
   - RPC_StartVote
+  - DefineSpawnPoint
+  - EnableMovement
+  - OnDamage
+  - OnHeal
+  - OnShieldGained
+  - RPC_AnnounceEvent
+  - RPC_ForceDisconnect
+  - RPC_SyncChampion
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
